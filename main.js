@@ -10,8 +10,7 @@ const params = {
   cursor: "*",
 };
 
-function urlFormat(url, params) {
-  let method = 'search'; //only 'search' is a method so far
+function urlFormat(url, method, params) {
   if ( params.q ) {
     // %3D is '=' but we want %3A which is ':' so stringify and replace
     // to avoid default conversion with URLSearchParams
@@ -21,6 +20,7 @@ function urlFormat(url, params) {
     // TODO: implement filters
     params.f = "";
   }
+  // console.log(params)
   let opt = new URLSearchParams(params);
   return url + '/' + method + '?' + opt;
 }
@@ -41,17 +41,44 @@ const query = (baseUrl, params) => {
       // get more results using cursor and recursive query calls
       sendRecursiveQuery(baseUrl, params, results)
       .then(res=>{
-        resolve(res) // res === results is true
+        resolve(res); // res === results is true
         })
       })
     .catch(err=>{
+      console.log(err);
       reject(Error("It broke"));
     })
   })
 }
 
+// params will only be the 'urn' or the 'fqId' e.g. 
+// urn:lsid:ipni.org:names:658592-1
+// and optionally 'distribution' and/or 'descriptions'
+// params = {fields': 'distribution,otherThing,___'}
+// http://www.plantsoftheworldonline.org/api/2/taxon/urn:lsid:ipni.org:names:658592-1?fields=distribution
+const lookup = (baseUrl, params, urn) => {
+  return new Promise ((resolve, reject) => {
+    let response = undefined;
+    params = 'fields='+ params;
+    let url = urlFormat(baseUrl, 'taxon/'+urn, params)
+    console.log(url);
+    return axios.get(url) // returns promise
+    .then(res=>{
+      if (res === undefined) resolve([]); // no results
+      if (res !== undefined) {
+        resolve(res.data) // res === results is true
+        // params.cursor = res.data.cursor;
+      }
+    })
+    .catch(err=>{
+      reject(Error("It broke"));
+    });
+  })
+}
+
 const sendQuery = (baseUrl, params) => {
-  let url = urlFormat(baseUrl, params);
+  let method = 'search';
+  let url = urlFormat(baseUrl, method, params);
   // console.log(url);
   return axios.get(url) // return a promise
   .then(res=>{
@@ -75,7 +102,8 @@ const sendQuery = (baseUrl, params) => {
 }
 
 const sendRecursiveQuery = (baseUrl, params, results) => {
-  let url = urlFormat(baseUrl, params);
+  let method = 'search';
+  let url = urlFormat(baseUrl, method, params);
   // console.log(url);
   return axios.get(url) // return a promise
   .then(res=>{
@@ -102,4 +130,5 @@ module.exports.IPNI_URL = IPNI_URL;
 module.exports.POWO_URL = POWO_URL;
 module.exports.KPL_URL = KPL_URL;
 module.exports.query = query;
+module.exports.lookup = lookup;
 module.exports.params = params;

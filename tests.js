@@ -10,6 +10,21 @@ let params = {
       cursor: "*", 
     }
 
+describe('#powo.lookup(POWO_URL, params=\'distribution\')', function() {
+  beforeEach(function() {
+    params = 'distribution';
+  })
+  
+  // chai-as-promised version
+  it('should return a record for \'Stanhopea oculata\' with a distribution', function() {
+    let urn = 'urn:lsid:ipni.org:names:658592-1';
+    // ipni.lookup(ipni.POWO_URL, params, urn).then((r)=>{console.log(r)});
+    return ipni.lookup(ipni.POWO_URL, params, urn)
+      .should.eventually.be.an('Object').to.include({"name": "Stanhopea oculata"})
+      .that.has.all.keys('fqId', 'distribution');
+  });
+})
+
 describe('#ipni.query(IPNI_URL, params.q={genus:___, species:___})', function() {
   beforeEach(function() {
     params = {
