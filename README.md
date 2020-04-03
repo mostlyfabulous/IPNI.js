@@ -4,10 +4,16 @@ Send queries to the International Plant Names Index (https://www.ipni.org/) data
 
 ### Prerequisites	
 
-axios—for making GET requests
+**axios**: for making GET requests
 
 ```	
 npm install axios
+```	
+**mocha**, **chai** & **chai-as-promised**: for running tests
+```	
+npm install mocha
+npm install chai
+npm install chai-as-promised
 ```	
 
 ## Authors
