@@ -1,6 +1,6 @@
 # IPNI.js
 
-Send queries to the International Plant Names Index (https://www.ipni.org/) database.
+Send queries to the International Plant Names Index (https://www.ipni.org/) database and get JSON results back.
 
 ### Prerequisites	
 
