@@ -5,8 +5,9 @@ const should = require("chai").should();
 chai.use(chaiAsPromised);
 
 const ipni = require('./main.js');
+const useRecursion = true;
 let params = {
-      perPage: 100, 
+      perPage: 2, 
       cursor: "*", 
     }
 
@@ -38,7 +39,7 @@ describe('#ipni.query(IPNI_URL, params.q={genus:___, species:___})', function() 
       genus: 'Stanhopea',
       species: 'oculata'
     }
-    return ipni.query(ipni.IPNI_URL, params).then((r)=>{
+    return ipni.query(ipni.IPNI_URL, params, useRecursion).then((r)=>{
       r.should.be.an('array').with.lengthOf.at.least(6);
     }) 
   });
@@ -48,7 +49,7 @@ describe('#ipni.query(IPNI_URL, params.q={genus:___, species:___})', function() 
       genus: 'Stanhopea',
       species: 'tigrina'
     }
-    return ipni.query(ipni.IPNI_URL, params)
+    return ipni.query(ipni.IPNI_URL, params, useRecursion)
       .should.eventually.be.an('array').with.lengthOf.at.least(4);
   });
 
@@ -57,7 +58,7 @@ describe('#ipni.query(IPNI_URL, params.q={genus:___, species:___})', function() 
       genus: 'Stanhopea',
       species: 'typo'
     }
-    return ipni.query(ipni.IPNI_URL, params)
+    return ipni.query(ipni.IPNI_URL, params, useRecursion)
       .should.eventually.be.an('array').with.lengthOf(0);
   });
 })
@@ -72,20 +73,20 @@ describe('#ipni.query(IPNI_URL, params.q={"a plant name"})', function() {
   
   it('should return >= 6 results for Stanhopea oculata', function() {
     params.q = 'Stanhopea oculata'
-    return ipni.query(ipni.IPNI_URL, params).then((r)=>{
+    return ipni.query(ipni.IPNI_URL, params, useRecursion).then((r)=>{
       r.should.be.an('array').with.lengthOf.at.least(6);
     }) 
   });
   // chai-as-promised version
   it('should return >= 4 results for Stanhopea tigrina', function() {
     params.q = 'Stanhopea tigrina'
-    return ipni.query(ipni.IPNI_URL, params)
+    return ipni.query(ipni.IPNI_URL, params, useRecursion)
       .should.eventually.be.an('array').with.lengthOf.at.least(4);
   });
 
   it('should return 0 results for Stanhopea typo', function() {
     params.q = 'Stanhopea typo'
-    return ipni.query(ipni.IPNI_URL, params)
+    return ipni.query(ipni.IPNI_URL, params, useRecursion)
       .should.eventually.be.an('array').with.lengthOf(0);
   });
 })
